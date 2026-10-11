@@ -62,8 +62,8 @@ public class AppConfig implements WebMvcConfigurer {
 
         // Para desarrollo (Angular en localhost)
         config.setAllowedOriginPatterns(List.of(
-                "http://localhost:4200"
-        ));
+                "http://localhost:4200",
+                "https://ind-urban-feet-frontend.onrender.com"));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
