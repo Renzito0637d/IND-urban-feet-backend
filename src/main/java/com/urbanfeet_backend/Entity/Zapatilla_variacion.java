@@ -2,7 +2,9 @@ package com.urbanfeet_backend.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +24,8 @@ public class Zapatilla_variacion {
     @NotBlank(message = "El color no puede estar vacío")
     private String color;
 
-    private String imageUrl;
+    @Column(name = "image_url", columnDefinition = "bytea")
+    private byte[] imageUrl;
 
     @NotNull(message = "El precio no puede ser nulo")
     @Min(value = 0, message = "El precio no puede ser negativo")
@@ -62,12 +65,20 @@ public class Zapatilla_variacion {
         this.color = color;
     }
 
-    public String getImageUrl() {
+    public byte[] getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
+    public void setImageUrl(byte[] imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    @Transient
+    public String getImageUrlBase64() {
+        if (this.imageUrl == null || this.imageUrl.length == 0) {
+            return null;
+        }
+        return "data:image/webp;base64," + java.util.Base64.getEncoder().encodeToString(this.imageUrl);
     }
 
     public Double getPrecio() {

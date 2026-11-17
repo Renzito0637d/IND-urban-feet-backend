@@ -42,7 +42,9 @@ public class Zapatilla_variacionDAOImpl implements Zapatilla_variacionDAO {
         if (original == null) return null;
 
         original.setColor(variacion.getColor());
-        original.setImageUrl(variacion.getImageUrl());
+        if (variacion.getImageUrl() != null && variacion.getImageUrl().length > 0) {
+            original.setImageUrl(variacion.getImageUrl());
+        }
         original.setPrecio(variacion.getPrecio());
         original.setStock(variacion.getStock());
         original.setTalla(variacion.getTalla());
