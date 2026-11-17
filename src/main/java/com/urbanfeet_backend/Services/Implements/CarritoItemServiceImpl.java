@@ -123,7 +123,7 @@ public class CarritoItemServiceImpl implements CarritoItemService {
                         variacion.getColor(),
                         variacion.getTalla(),
                         variacion.getPrecio(),
-                        variacion.getImageUrl(),
+                        variacion.getImageUrlBase64(),
                         variacion.getStock(),
                         
                         zapatilla.getNombre(),

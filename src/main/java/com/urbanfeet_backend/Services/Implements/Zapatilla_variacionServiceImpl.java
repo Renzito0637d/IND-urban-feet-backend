@@ -35,6 +35,7 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
         }
 
         List<Zapatilla_variacion> nuevasVariaciones = new ArrayList<>();
+        byte[] imagenBytes = parseBase64Image(request.imageUrl());
 
         // BUCLE: Creamos una variación por cada talla en la lista
         for (String talla : request.tallas()) {
@@ -43,7 +44,7 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
             variacion.setColor(request.color());
             variacion.setPrecio(request.precio());
             variacion.setStock(request.stock()); // Asigna el mismo stock inicial a todas
-            variacion.setImageUrl(request.imageUrl());
+            variacion.setImageUrl(imagenBytes);
 
             // Lo único que cambia es la talla
             variacion.setTalla(talla);
@@ -87,7 +88,9 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
         v.setTalla(request.talla());
         v.setPrecio(request.precio());
         v.setStock(request.stock());
-        v.setImageUrl(request.imageUrl());
+        if (request.imageUrl() != null && !request.imageUrl().isBlank()) {
+            v.setImageUrl(parseBase64Image(request.imageUrl()));
+        }
         // No cambiamos la zapatilla padre al editar la variación
 
         Zapatilla_variacion actualizada = variacionDao.update(id, v); // O save() según tu DAO
@@ -109,14 +112,33 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
     }
 
     private VariacionResponse mapToDto(Zapatilla_variacion v) {
+        String base64Img = null;
+        if (v.getImageUrl() != null && v.getImageUrl().length > 0) {
+            base64Img = "data:image/webp;base64," + java.util.Base64.getEncoder().encodeToString(v.getImageUrl());
+        }
         return new VariacionResponse(
                 v.getId(),
                 v.getColor(),
-                v.getImageUrl(),
+                base64Img,
                 v.getPrecio(),
                 v.getStock(),
                 v.getTalla(),
                 v.getZapatilla().getId());
+    }
+
+    private byte[] parseBase64Image(String input) {
+        if (input == null || input.isBlank()) {
+            return null;
+        }
+        try {
+            String cleanBase64 = input;
+            if (cleanBase64.contains(",")) {
+                cleanBase64 = cleanBase64.substring(cleanBase64.indexOf(",") + 1);
+            }
+            return java.util.Base64.getDecoder().decode(cleanBase64.trim());
+        } catch (IllegalArgumentException e) {
+            return input.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        }
     }
 
     @Override

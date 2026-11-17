@@ -81,7 +81,7 @@ public class ZapatillaServiceImpl implements ZapatillaService {
                     .map(v -> new VariacionResponse(
                             v.getId(),
                             v.getColor(),
-                            v.getImageUrl(),
+                            v.getImageUrlBase64(),
                             v.getPrecio(),
                             v.getStock(),
                             v.getTalla(),
