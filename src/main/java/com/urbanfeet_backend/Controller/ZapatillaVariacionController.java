@@ -34,6 +34,19 @@ public class ZapatillaVariacionController {
         return ResponseEntity.ok(variacionService.findByZapatillaId(zapatillaId));
     }
 
+    // OBTENER IMAGEN BINARIA (WEBP) DIRECTA
+    @GetMapping(value = "/{id}/imagen", produces = "image/webp")
+    public ResponseEntity<byte[]> obtenerImagen(@PathVariable Integer id) {
+        var variacion = variacionService.buscarPorId(id);
+        if (variacion == null || variacion.getImageUrl() == null || variacion.getImageUrl().length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "image/webp")
+                .header(org.springframework.http.HttpHeaders.CACHE_CONTROL, "public, max-age=86400")
+                .body(variacion.getImageUrl());
+    }
+
     // ACTUALIZAR (Nuevo endpoint)
     @PutMapping("/{id}")
     public ResponseEntity<VariacionResponse> actualizarVariacion(
