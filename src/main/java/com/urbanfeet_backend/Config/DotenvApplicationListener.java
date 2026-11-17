@@ -18,6 +18,14 @@ public class DotenvApplicationListener implements ApplicationListener<Applicatio
                 .ignoreIfMissing()
                 .load();
 
+        // Si se ejecutó desde la carpeta raíz del proyecto, buscar dentro de IND-urban-feet-backend
+        if (dotenv.entries().isEmpty()) {
+            dotenv = Dotenv.configure()
+                    .directory("./IND-urban-feet-backend")
+                    .ignoreIfMissing()
+                    .load();
+        }
+
         Map<String, Object> envMap = new HashMap<>();
         dotenv.entries().forEach(entry -> {
             envMap.put(entry.getKey(), entry.getValue());
