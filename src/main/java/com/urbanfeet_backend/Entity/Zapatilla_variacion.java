@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Transient;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,8 +23,9 @@ public class Zapatilla_variacion {
     @NotBlank(message = "El color no puede estar vacío")
     private String color;
 
-    @Column(name = "image_url", columnDefinition = "bytea")
-    private byte[] imageUrl;
+    /** URL pública de la imagen (CDN de marca u otra URL estable). */
+    @Column(name = "image_url", columnDefinition = "text")
+    private String imageUrl;
 
     @NotNull(message = "El precio no puede ser nulo")
     @Min(value = 0, message = "El precio no puede ser negativo")
@@ -38,9 +38,6 @@ public class Zapatilla_variacion {
     @NotBlank(message = "La talla no puede estar vacía")
     private String talla;
 
-    // --- MEJORA CRÍTICA ---
-    // @JsonBackReference es el "hijo".
-    // para evitar el bucle infinito.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zapatilla_id", nullable = false)
     @JsonBackReference
@@ -65,20 +62,12 @@ public class Zapatilla_variacion {
         this.color = color;
     }
 
-    public byte[] getImageUrl() {
+    public String getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(byte[] imageUrl) {
+    public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    @Transient
-    public String getImageUrlBase64() {
-        if (this.imageUrl == null || this.imageUrl.length == 0) {
-            return null;
-        }
-        return "data:image/webp;base64," + java.util.Base64.getEncoder().encodeToString(this.imageUrl);
     }
 
     public Double getPrecio() {

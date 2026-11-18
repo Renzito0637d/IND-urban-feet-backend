@@ -35,30 +35,24 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
         }
 
         List<Zapatilla_variacion> nuevasVariaciones = new ArrayList<>();
-        byte[] imagenBytes = parseBase64Image(request.imageUrl());
+        String imageUrl = blankToNull(request.imageUrl());
 
-        // BUCLE: Creamos una variación por cada talla en la lista
         for (String talla : request.tallas()) {
             Zapatilla_variacion variacion = new Zapatilla_variacion();
             variacion.setZapatilla(zap);
             variacion.setColor(request.color());
             variacion.setPrecio(request.precio());
-            variacion.setStock(request.stock()); // Asigna el mismo stock inicial a todas
-            variacion.setImageUrl(imagenBytes);
-
-            // Lo único que cambia es la talla
+            variacion.setStock(request.stock());
+            variacion.setImageUrl(imageUrl);
             variacion.setTalla(talla);
-
             nuevasVariaciones.add(variacion);
         }
 
         List<VariacionResponse> respuestas = new ArrayList<>();
-
         for (Zapatilla_variacion v : nuevasVariaciones) {
             Zapatilla_variacion guardada = variacionDao.save(v);
             respuestas.add(mapToDto(guardada));
         }
-
         return respuestas;
     }
 
@@ -89,11 +83,10 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
         v.setPrecio(request.precio());
         v.setStock(request.stock());
         if (request.imageUrl() != null && !request.imageUrl().isBlank()) {
-            v.setImageUrl(parseBase64Image(request.imageUrl()));
+            v.setImageUrl(request.imageUrl().trim());
         }
-        // No cambiamos la zapatilla padre al editar la variación
 
-        Zapatilla_variacion actualizada = variacionDao.update(id, v); // O save() según tu DAO
+        Zapatilla_variacion actualizada = variacionDao.update(id, v);
         return mapToDto(actualizada);
     }
 
@@ -103,7 +96,7 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
     }
 
     @Override
-    @Transactional(readOnly = true) // <--- CRÍTICO: Mantiene la sesión abierta para leer
+    @Transactional(readOnly = true)
     public List<VariacionResponse> findByZapatillaId(Integer zapatillaId) {
         List<Zapatilla_variacion> lista = variacionDao.findByZapatillaId(zapatillaId);
         return lista.stream()
@@ -112,39 +105,26 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
     }
 
     private VariacionResponse mapToDto(Zapatilla_variacion v) {
-        String base64Img = null;
-        if (v.getImageUrl() != null && v.getImageUrl().length > 0) {
-            base64Img = "data:image/webp;base64," + java.util.Base64.getEncoder().encodeToString(v.getImageUrl());
-        }
         return new VariacionResponse(
                 v.getId(),
                 v.getColor(),
-                base64Img,
+                v.getImageUrl(),
                 v.getPrecio(),
                 v.getStock(),
                 v.getTalla(),
                 v.getZapatilla().getId());
     }
 
-    private byte[] parseBase64Image(String input) {
-        if (input == null || input.isBlank()) {
+    private static String blankToNull(String value) {
+        if (value == null || value.isBlank()) {
             return null;
         }
-        try {
-            String cleanBase64 = input;
-            if (cleanBase64.contains(",")) {
-                cleanBase64 = cleanBase64.substring(cleanBase64.indexOf(",") + 1);
-            }
-            return java.util.Base64.getDecoder().decode(cleanBase64.trim());
-        } catch (IllegalArgumentException e) {
-            return input.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-        }
+        return value.trim();
     }
 
     @Override
     @Transactional
     public void actualizar(Zapatilla_variacion variacion) {
-        // Simplemente llamamos al DAO para que guarde los cambios (stock, etc.)
-        variacionDao.actualizar(variacion); 
+        variacionDao.actualizar(variacion);
     }
 }

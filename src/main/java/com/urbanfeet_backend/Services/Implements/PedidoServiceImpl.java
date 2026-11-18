@@ -258,7 +258,7 @@ public class PedidoServiceImpl implements PedidoService {
                 .map(d -> {
                     var variacion = d.getZapatilla_variacion();
                     var zapatilla = variacion.getZapatilla();
-                    String imagen = variacion.getImageUrlBase64();
+                    String imagen = variacion.getImageUrl();
                     return new PedidoDetalleResponseDTO(
                             d.getId(),
                             variacion.getId(),
