@@ -13,13 +13,6 @@ API RESTful robusta y motor de reglas de negocio para la plataforma de comercio 
 | **Repositorio Backend (GitHub)** | 🔗 [https://github.com/Renzito0637d/IND-urban-feet-backend.git](https://github.com/Renzito0637d/IND-urban-feet-backend.git) | `develop` |
 | **Repositorio Frontend (GitHub)** | 🔗 [https://github.com/Renzito0637d/IND-urban-feet-frontend.git](https://github.com/Renzito0637d/IND-urban-feet-frontend.git) | `develop` |
 
-### 🔑 Credenciales Demo para Evaluación de Jurado
-
-* **Usuario Cliente (B2C):** `cliente@urbanfeet.com` / Contraseña: `Cliente123*`  
-  *(Permite navegar, interactuar con el asistente virtual UrbanBot, agregar al carrito y comprar).*
-* **Usuario Administrador:** `admin@urbanfeet.com` / Contraseña: `Admin123*`  
-  *(Acceso al panel gerencial, control de inventario, variación de stock y pedidos).*
-
 > [!NOTE]  
 > **Comportamiento FinOps (Render Free Tier):** Si el servidor no ha recibido tráfico en los últimos 15 minutos, el contenedor entra en modo de reposo (*spin-down*). La primera petición HTTP puede tardar entre 30 y 45 segundos mientras se reactiva automáticamente.
 
