@@ -44,8 +44,12 @@ public class AuthController {
         }
 
         @GetMapping("/me")
-        public MeResponse me(Authentication auth) {
-                return authService.getMe(auth);
+        public ResponseEntity<?> me(Authentication auth) {
+                if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+                        return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED)
+                                        .body(Map.of("message", "No autenticado"));
+                }
+                return ResponseEntity.ok(authService.getMe(auth));
         }
 
         @PostMapping("/refresh")
