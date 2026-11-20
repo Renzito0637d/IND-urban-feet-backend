@@ -14,14 +14,17 @@ public class DotenvApplicationListener implements ApplicationListener<Applicatio
     @Override
     public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
         ConfigurableEnvironment environment = event.getEnvironment();
-        Dotenv dotenv = Dotenv.configure()
-                .ignoreIfMissing()
-                .load();
-
-        // Si se ejecutó desde la carpeta raíz del proyecto, buscar dentro de IND-urban-feet-backend
-        if (dotenv.entries().isEmpty()) {
+        
+        // Priorizar ./IND-urban-feet-backend/.env si se arranca desde la raíz del workspace
+        java.io.File backendEnv = new java.io.File("./IND-urban-feet-backend/.env");
+        Dotenv dotenv;
+        if (backendEnv.exists()) {
             dotenv = Dotenv.configure()
                     .directory("./IND-urban-feet-backend")
+                    .ignoreIfMissing()
+                    .load();
+        } else {
+            dotenv = Dotenv.configure()
                     .ignoreIfMissing()
                     .load();
         }
