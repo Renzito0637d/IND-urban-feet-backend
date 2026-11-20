@@ -35,29 +35,24 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
         }
 
         List<Zapatilla_variacion> nuevasVariaciones = new ArrayList<>();
+        String imageUrl = blankToNull(request.imageUrl());
 
-        // BUCLE: Creamos una variación por cada talla en la lista
         for (String talla : request.tallas()) {
             Zapatilla_variacion variacion = new Zapatilla_variacion();
             variacion.setZapatilla(zap);
             variacion.setColor(request.color());
             variacion.setPrecio(request.precio());
-            variacion.setStock(request.stock()); // Asigna el mismo stock inicial a todas
-            variacion.setImageUrl(request.imageUrl());
-
-            // Lo único que cambia es la talla
+            variacion.setStock(request.stock());
+            variacion.setImageUrl(imageUrl);
             variacion.setTalla(talla);
-
             nuevasVariaciones.add(variacion);
         }
 
         List<VariacionResponse> respuestas = new ArrayList<>();
-
         for (Zapatilla_variacion v : nuevasVariaciones) {
             Zapatilla_variacion guardada = variacionDao.save(v);
             respuestas.add(mapToDto(guardada));
         }
-
         return respuestas;
     }
 
@@ -87,10 +82,11 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
         v.setTalla(request.talla());
         v.setPrecio(request.precio());
         v.setStock(request.stock());
-        v.setImageUrl(request.imageUrl());
-        // No cambiamos la zapatilla padre al editar la variación
+        if (request.imageUrl() != null && !request.imageUrl().isBlank()) {
+            v.setImageUrl(request.imageUrl().trim());
+        }
 
-        Zapatilla_variacion actualizada = variacionDao.update(id, v); // O save() según tu DAO
+        Zapatilla_variacion actualizada = variacionDao.update(id, v);
         return mapToDto(actualizada);
     }
 
@@ -100,7 +96,7 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
     }
 
     @Override
-    @Transactional(readOnly = true) // <--- CRÍTICO: Mantiene la sesión abierta para leer
+    @Transactional(readOnly = true)
     public List<VariacionResponse> findByZapatillaId(Integer zapatillaId) {
         List<Zapatilla_variacion> lista = variacionDao.findByZapatillaId(zapatillaId);
         return lista.stream()
@@ -119,10 +115,16 @@ public class Zapatilla_variacionServiceImpl implements Zapatilla_variacionServic
                 v.getZapatilla().getId());
     }
 
+    private static String blankToNull(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
+    }
+
     @Override
     @Transactional
     public void actualizar(Zapatilla_variacion variacion) {
-        // Simplemente llamamos al DAO para que guarde los cambios (stock, etc.)
-        variacionDao.actualizar(variacion); 
+        variacionDao.actualizar(variacion);
     }
 }

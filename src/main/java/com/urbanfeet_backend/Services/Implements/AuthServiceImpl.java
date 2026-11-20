@@ -90,6 +90,9 @@ public class AuthServiceImpl implements AuthService{
      * Obtiene la información del usuario autenticado actualmente.
      */
     public MeResponse getMe(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return null;
+        }
         Object principal = auth.getPrincipal();
 
         String email = (principal instanceof UserDetails ud)

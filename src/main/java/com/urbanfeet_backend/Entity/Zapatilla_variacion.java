@@ -2,6 +2,7 @@ package com.urbanfeet_backend.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +23,8 @@ public class Zapatilla_variacion {
     @NotBlank(message = "El color no puede estar vacío")
     private String color;
 
+    /** URL pública de la imagen (CDN de marca u otra URL estable). */
+    @Column(name = "image_url", columnDefinition = "text")
     private String imageUrl;
 
     @NotNull(message = "El precio no puede ser nulo")
@@ -35,9 +38,6 @@ public class Zapatilla_variacion {
     @NotBlank(message = "La talla no puede estar vacía")
     private String talla;
 
-    // --- MEJORA CRÍTICA ---
-    // @JsonBackReference es el "hijo".
-    // para evitar el bucle infinito.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zapatilla_id", nullable = false)
     @JsonBackReference
