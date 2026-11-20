@@ -2,6 +2,7 @@ package com.urbanfeet_backend.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,6 +39,7 @@ public class SecurityConfig {
                         // Público
                         .requestMatchers(
                                 "/auth/**",
+                                "/chat/**",
                                 "/docs/**",
                                 "/actuator/health",
                                 "/error", /*
@@ -47,6 +49,7 @@ public class SecurityConfig {
                                 "/zapatilla/public/list",
                                 "/pedidos/all")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/zapatilla/**").permitAll()
 
                         // Por roles (GrantedAuthority tiene "ROLE_")
                         .requestMatchers("/admin/**", "/pedido/**", "/inventario/**", "/ventas/**").hasRole("ADMIN")
